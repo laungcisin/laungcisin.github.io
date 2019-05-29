@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh_cn">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1、部署第一个nginx，作为应用层nginx（192.168.332.61那个机器上） 部署OpenResty12345678910111213141516171819202122232425262728293031323334353637#使用root用户安装yum install -y readline-devel pcre-devel openssl-devel gcc#使用bigdata">
+<meta property="og:type" content="article">
+<meta property="og:title" content="52-基于OpenResty部署应用层nginx以及nginx-lua开发helloworld">
+<meta property="og:url" content="http://yoursite.com/2018/12/26/52-基于OpenResty部署应用层nginx以及nginx-lua开发helloworld/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1、部署第一个nginx，作为应用层nginx（192.168.332.61那个机器上） 部署OpenResty12345678910111213141516171819202122232425262728293031323334353637#使用root用户安装yum install -y readline-devel pcre-devel openssl-devel gcc#使用bigdata">
+<meta property="og:locale" content="zh_cn">
+<meta property="og:updated_time" content="2019-04-11T07:18:15.901Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="52-基于OpenResty部署应用层nginx以及nginx-lua开发helloworld">
+<meta name="twitter:description" content="1、部署第一个nginx，作为应用层nginx（192.168.332.61那个机器上） 部署OpenResty12345678910111213141516171819202122232425262728293031323334353637#使用root用户安装yum install -y readline-devel pcre-devel openssl-devel gcc#使用bigdata">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/26/52-基于OpenResty部署应用层nginx以及nginx-lua开发helloworld/">
+
+
+
+
+
+  <title>52-基于OpenResty部署应用层nginx以及nginx-lua开发helloworld | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh_cn">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/26/52-基于OpenResty部署应用层nginx以及nginx-lua开发helloworld/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laungcisin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">52-基于OpenResty部署应用层nginx以及nginx-lua开发helloworld</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-26T19:38:25+08:00">
+                2018-12-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>1、部署第一个<code>nginx</code>，作为应用层<code>nginx</code>（192.168.332.61那个机器上）</p>
+<h2 id="部署OpenResty"><a href="#部署OpenResty" class="headerlink" title="部署OpenResty"></a>部署<code>OpenResty</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#使用root用户安装</span><br><span class="line">yum install -y readline-devel pcre-devel openssl-devel gcc</span><br><span class="line"></span><br><span class="line">#使用bigdata用户安装</span><br><span class="line">cd /home/bigdata/software</span><br><span class="line">wget http://openresty.org/download/openresty-1.13.6.1.tar.gz</span><br><span class="line">tar -zxvf /home/bigdata/software/openresty-1.13.6.1.tar.gz -C /export/servers/</span><br><span class="line"></span><br><span class="line">cd /export/servers/openresty-1.13.6.1/bundle/LuaJIT-2.1-20171103/</span><br><span class="line">make clean &amp;&amp; make &amp;&amp; make install</span><br><span class="line">ln -sf luajit-2.1.0-alpha /usr/local/bin/luajit</span><br><span class="line"></span><br><span class="line">cd /export/servers/openresty-1.13.6.1/bundle </span><br><span class="line">wget https://github.com/FRiCKLE/ngx_cache_purge/archive/2.3.tar.gz</span><br><span class="line">tar -xvf 2.3.tar.gz</span><br><span class="line"></span><br><span class="line">cd /export/servers/openresty-1.13.6.1/bundle</span><br><span class="line">wget https://github.com/yaoweibin/nginx_upstream_check_module/archive/v0.3.0.tar.gz</span><br><span class="line">tar -xvf v0.3.0.tar.gz</span><br><span class="line"></span><br><span class="line">cd /export/servers/openresty-1.13.6.1</span><br><span class="line">./configure --prefix=/export/servers --with-http_realip_module  --with-pcre  --with-luajit --add-module=./bundle/ngx_cache_purge-2.3/ --add-module=./bundle/nginx_upstream_check_module-0.3.0/ -j2</span><br><span class="line"></span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line">cd /export/servers/</span><br><span class="line">ll</span><br><span class="line">#显示有以下结果</span><br><span class="line">/export/servers/luajit</span><br><span class="line">/export/servers/lualib</span><br><span class="line">/export/servers/nginx</span><br><span class="line">/export/servers/nginx/sbin/nginx -V</span><br><span class="line"></span><br><span class="line">#使用root启动nginx，否则会报错</span><br><span class="line">#原因：the socket API bind() to a port less than 1024, such as 80 as your title mentioned, need root access.</span><br><span class="line">/export/servers/nginx/sbin/nginx</span><br></pre></td></tr></table></figure>
+<h2 id="nginx-lua开发的hello-world"><a href="#nginx-lua开发的hello-world" class="headerlink" title="nginx+lua开发的hello world"></a><code>nginx+lua</code>开发的<code>hello world</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /export/servers/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>在<code>http</code>部分添加：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">lua_package_path &quot;/export/servers/lualib/?.lua;;&quot;;</span><br><span class="line">lua_package_cpath &quot;/export/servers/lualib/?.so;;&quot;;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><code>/export/servers/nginx/conf</code>下，创建一个<code>lua.conf</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cd /export/servers/nginx/conf</span><br><span class="line">vi lua.conf</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name _;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在<code>nginx.conf</code>的<code>http</code>部分添加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vi /export/servers/nginx/conf/nginx.conf</span><br><span class="line">include lua.conf;</span><br></pre></td></tr></table></figure></p>
+<p>验证配置是否正确：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#使用root用户执行</span><br><span class="line">/export/servers/nginx/sbin/nginx -t</span><br></pre></td></tr></table></figure></p>
+<p>在<code>lua.conf</code>的<code>server</code>部分添加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vi /export/servers/nginx/conf/lua.conf</span><br><span class="line">	location /lua &#123;</span><br><span class="line">	default_type &apos;text/html&apos;;</span><br><span class="line">	content_by_lua &apos;ngx.say(&quot;hello world&quot;)&apos;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#使用root用户执行</span><br><span class="line">/export/servers/nginx/sbin/nginx -t</span><br></pre></td></tr></table></figure></p>
+<p>重新<code>nginx</code>加载配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/export/servers/nginx/sbin/nginx -s reload</span><br></pre></td></tr></table></figure></p>
+<p>访问 <a href="http://192.168.33.61/lua" target="_blank" rel="noopener">http://192.168.33.61/lua</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /export/servers/nginx/conf/lua/</span><br><span class="line">vi test.lua</span><br><span class="line"></span><br><span class="line">ngx.say(&quot;hello world&quot;);</span><br></pre></td></tr></table></figure></p>
+<p>修改<code>lua.conf</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vi /export/servers/nginx/conf/lua.conf</span><br><span class="line">	location /lua &#123;</span><br><span class="line">		default_type &apos;text/html&apos;;</span><br><span class="line">		content_by_lua_file conf/lua/test.lua; </span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查看异常日志<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tail -f /export/servers/nginx/logs/error.log</span><br></pre></td></tr></table></figure></p>
+<h2 id="工程化的nginx-lua项目结构"><a href="#工程化的nginx-lua项目结构" class="headerlink" title="工程化的nginx+lua项目结构"></a>工程化的<code>nginx+lua</code>项目结构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /home/bigdata/ngnix-test</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#修改nginx.conf 把user 改成有权限的用户（当前用户）</span><br><span class="line">#否则会报nginx_bug（1）：failed to load external Lua file &quot;xxxx.lua&quot;: cannot open xxxx.lua: Permission denied 错误</span><br><span class="line">vi /export/servers/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">#user nobody;</span><br><span class="line"># 改成 --&gt; user [用户名].根据实际情况修改</span><br><span class="line">user bigdata</span><br></pre></td></tr></table></figure>
+<p>项目工程结构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ngnix-test</span><br><span class="line">    ngnix-test.conf     </span><br><span class="line">    lua              </span><br><span class="line">		ngnix-test.lua</span><br><span class="line">    lualib            </span><br><span class="line">		*.lua</span><br><span class="line">		*.so</span><br></pre></td></tr></table></figure>
+<p>放在<code>/home/bigdata/ngnix-test</code>目录下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">vi /export/servers/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">	lua_package_path &quot;/home/bigdata/ngnix-test/lualib/?.lua;;&quot;;</span><br><span class="line">	lua_package_cpath &quot;/home/bigdata/ngnix-test/lualib/?.so;;&quot;;</span><br><span class="line">	include /home/bigdata/ngnix-test/ngnix-test.conf;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">cd /home/bigdata/ngnix-test/</span><br><span class="line">vi ngnix-test.conf</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  _;</span><br><span class="line"></span><br><span class="line">	location /ngnix-test &#123;</span><br><span class="line">		default_type &apos;text/html&apos;;</span><br><span class="line">		content_by_lua_file /home/bigdata/ngnix-test/lua/ngnix-test.lua;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mkdir -p /home/bigdata/ngnix-test/lua</span><br><span class="line">cd /home/bigdata/ngnix-test/lua</span><br><span class="line">vi ngnix-test.lua</span><br><span class="line"></span><br><span class="line">ngx.say(&quot;hello world&quot;);</span><br><span class="line"></span><br><span class="line">mkdir -p /home/bigdata/ngnix-test/lualib</span><br><span class="line">cp -r /export/servers/lualib/ /home/bigdata/ngnix-test/</span><br><span class="line"></span><br><span class="line">#使用root用户执行</span><br><span class="line">/export/servers/nginx/sbin/nginx -s reload</span><br></pre></td></tr></table></figure></p>
+<p>访问 <a href="http://192.168.33.61/ngnix-test" target="_blank" rel="noopener">http://192.168.33.61/ngnix-test</a></p>
+<h2 id="如法炮制，在其余机器上，也用OpenResty部署一个nginx"><a href="#如法炮制，在其余机器上，也用OpenResty部署一个nginx" class="headerlink" title="如法炮制，在其余机器上，也用OpenResty部署一个nginx"></a>如法炮制，在其余机器上，也用<code>OpenResty</code>部署一个<code>nginx</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp -r /home/bigdata/ngnix-test/ bigdata@192.168.33.63:/home/bigdata/</span><br><span class="line">scp -r /export/servers/nginx/conf/nginx.conf bigdata@192.168.33.63:/export/servers/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/26/51-基于-分发层-应用层双层nginx架构提升缓存命中率方案分析/" rel="next" title="51-基于-分发层-应用层双层nginx架构提升缓存命中率方案分析">
+                <i class="fa fa-chevron-left"></i> 51-基于-分发层-应用层双层nginx架构提升缓存命中率方案分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/27/53-部署分发层nginx以及基于lua完成基于商品id的定向流量分发策略/" rel="prev" title="53-部署分发层nginx以及基于lua完成基于商品id的定向流量分发策略">
+                53-部署分发层nginx以及基于lua完成基于商品id的定向流量分发策略 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">laungcisin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#部署OpenResty"><span class="nav-number">1.</span> <span class="nav-text">部署OpenResty</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx-lua开发的hello-world"><span class="nav-number">2.</span> <span class="nav-text">nginx+lua开发的hello world</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工程化的nginx-lua项目结构"><span class="nav-number">3.</span> <span class="nav-text">工程化的nginx+lua项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如法炮制，在其余机器上，也用OpenResty部署一个nginx"><span class="nav-number">4.</span> <span class="nav-text">如法炮制，在其余机器上，也用OpenResty部署一个nginx</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">laungcisin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh_cn">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="如果缓存服务在本地的ehcache中都读取不到数据，这个时候就意味着，需要重新到源头的服务中去拉取数据，拉取到数据之后，赶紧先给nginx的请求返回，同时将数据写入ehcache和redis中。 分布式重建缓存的并发冲突问题重建缓存：  数据在所有的缓存中都不存在了（LRU算法清理了），就需要重新查询数据写入缓存，重建缓存。  分布式的重建缓存：  在不同的机器上，不同的服务实例中，去做上面的事情">
+<meta property="og:type" content="article">
+<meta property="og:title" content="57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案">
+<meta property="og:url" content="http://yoursite.com/2018/12/28/57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="如果缓存服务在本地的ehcache中都读取不到数据，这个时候就意味着，需要重新到源头的服务中去拉取数据，拉取到数据之后，赶紧先给nginx的请求返回，同时将数据写入ehcache和redis中。 分布式重建缓存的并发冲突问题重建缓存：  数据在所有的缓存中都不存在了（LRU算法清理了），就需要重新查询数据写入缓存，重建缓存。  分布式的重建缓存：  在不同的机器上，不同的服务实例中，去做上面的事情">
+<meta property="og:locale" content="zh_cn">
+<meta property="og:image" content="http://yoursite.com/2018/12/28/57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案/多个缓存服务实例分布式重建的并发冲突问题.png">
+<meta property="og:image" content="http://yoursite.com/2018/12/28/57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案/缓存更新和缓存重建在不同机器上的并发冲突问题.png">
+<meta property="og:image" content="http://yoursite.com/2018/12/28/57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案/基于zookeeper分布式锁的冲突解决方案.png">
+<meta property="og:updated_time" content="2019-04-11T07:18:15.919Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案">
+<meta name="twitter:description" content="如果缓存服务在本地的ehcache中都读取不到数据，这个时候就意味着，需要重新到源头的服务中去拉取数据，拉取到数据之后，赶紧先给nginx的请求返回，同时将数据写入ehcache和redis中。 分布式重建缓存的并发冲突问题重建缓存：  数据在所有的缓存中都不存在了（LRU算法清理了），就需要重新查询数据写入缓存，重建缓存。  分布式的重建缓存：  在不同的机器上，不同的服务实例中，去做上面的事情">
+<meta name="twitter:image" content="http://yoursite.com/2018/12/28/57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案/多个缓存服务实例分布式重建的并发冲突问题.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/28/57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案/">
+
+
+
+
+
+  <title>57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh_cn">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/28/57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laungcisin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-28T14:47:13+08:00">
+                2018-12-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>如果缓存服务在本地的ehcache中都读取不到数据，这个时候就意味着，需要重新到源头的服务中去拉取数据，拉取到数据之后，赶紧先给nginx的请求返回，同时将数据写入ehcache和redis中。</p>
+<h2 id="分布式重建缓存的并发冲突问题"><a href="#分布式重建缓存的并发冲突问题" class="headerlink" title="分布式重建缓存的并发冲突问题"></a><strong>分布式重建缓存的并发冲突问题</strong></h2><p><strong>重建缓存</strong>：</p>
+<blockquote>
+<p>数据在所有的缓存中都不存在了（LRU算法清理了），就需要重新查询数据写入缓存，重建缓存。</p>
+</blockquote>
+<p><strong>分布式的重建缓存</strong>：</p>
+<blockquote>
+<p>在不同的机器上，不同的服务实例中，去做上面的事情，就会出现多个机器分布式重建去读取相同的数据，然后写入缓存中。</p>
+</blockquote>
+<h2 id="分布式重建缓存的并发冲突问题-1"><a href="#分布式重建缓存的并发冲突问题-1" class="headerlink" title="分布式重建缓存的并发冲突问题"></a><strong>分布式重建缓存的并发冲突问题</strong></h2><ol>
+<li><p>流量均匀分布到所有缓存服务实例上</p>
+<blockquote>
+<p>应用层nginx，是将请求流量均匀地打到各个缓存服务实例中的，可能咱们的eshop-cache那个服务，可能会部署多实例在不同的机器上</p>
+</blockquote>
+</li>
+<li><p>应用层nginx的hash，固定商品id，走固定的缓存服务实例</p>
+<blockquote>
+<p>分发层的nginx的lua脚本，有应用层nginx的地址列表，对每个商品id做一个hash，然后对应用nginx数量取模。</p>
+</blockquote>
+<blockquote>
+<p>将每个商品的请求固定分发到同一个应用层nginx上面去</p>
+</blockquote>
+<blockquote>
+<p>在应用层nginx里，发现自己本地lua shared dict缓存中没有数据的时候，就采取一样的方式，对product id取模，然后将请求固定分发到同一个缓存服务实例中去</p>
+</blockquote>
+<blockquote>
+<p>这样的话，就不会出现说多个缓存服务实例分布式的去更新那个缓存了</p>
+</blockquote>
+<blockquote>
+<p><strong><em>留个作业，大家去做吧，这个东西，之前已经讲解过了，lua脚本几乎都是一模一样的，我们就不去做了，节省点时间</em></strong></p>
+</blockquote>
+</li>
+<li><p>源信息服务发送的变更消息，需要按照商品id去分区，固定的商品变更走固定的kafka分区，也就是固定的一个缓存服务实例获取到</p>
+<blockquote>
+<p>缓存服务，是监听kafka topic的，一个缓存服务实例，作为一个kafka consumer，就消费topic中的一个partition</p>
+</blockquote>
+<blockquote>
+<p>所以你有多个缓存服务实例的话，每个缓存服务实例就消费一个kafka partition</p>
+</blockquote>
+<blockquote>
+<p>所以这里，一般来说，你的源头信息服务，在发送消息到kafka topic的时候，都需要按照product id去分区</p>
+</blockquote>
+<blockquote>
+<p>也就时说，同一个product id变更的消息一定是到同一个kafka partition中去的，也就是说同一个product id的变更消息，一定是同一个缓存服务实例消费到的</p>
+</blockquote>
+<blockquote>
+<p><strong><em>我们也不去做了，其实很简单，kafka producer api，里面send message的时候，多加一个参数就可以了，product id传递进去，就可以了</em></strong></p>
+</blockquote>
+</li>
+<li><p>问题是，自己写的简易的hash分发，与kafka的分区，可能并不一致！！！</p>
+<blockquote>
+<p>我们自己写的简易的hash分发策略，是按照crc32去取hash值，然后再取模的</p>
+</blockquote>
+<blockquote>
+<p>关键你又不知道你的kafka producer的hash策略是什么，很可能说跟我们的策略是不一样的</p>
+</blockquote>
+<blockquote>
+<p>那就可能导致说，数据变更的消息所到的缓存服务实例，跟我们的应用层nginx分发到的那个缓存服务实例也许就不在一台机器上了</p>
+</blockquote>
+<blockquote>
+<p>这样的话，在高并发，极端的情况下，可能就会出现冲突</p>
+</blockquote>
+</li>
+<li><p>分布式的缓存重建并发冲突问题发生了。。。</p>
+</li>
+<li><p>基于zookeeper分布式锁的解决方案</p>
+<blockquote>
+<p>分布式锁，如果你有多个机器在访问同一个共享资源，那么这个时候，如果你需要加个锁，让多个分布式的机器在访问共享资源的时候串行起来</p>
+</blockquote>
+<blockquote>
+<p>那么这个时候，那个锁，多个不同机器上的服务共享的锁，就是分布式锁</p>
+</blockquote>
+<blockquote>
+<p>分布式锁当然有很多种不同的实现方案，redis分布式锁，zookeeper分布式锁</p>
+</blockquote>
+<blockquote>
+<p>zk，做分布式协调这一块，还是很流行的，大数据应用里面，hadoop，storm，都是基于zk去做分布式协调</p>
+</blockquote>
+<blockquote>
+<p><strong>zk分布式锁的解决并发冲突的方案</strong></p>
+</blockquote>
+<blockquote>
+<blockquote>
+<ol>
+<li>变更缓存重建以及空缓存请求重建，更新redis之前，都需要先获取对应商品id的分布式锁</li>
+<li>拿到分布式锁之后，需要根据时间版本去比较一下，如果自己的版本新于redis中的版本，那么就更新，否则就不更新</li>
+<li>如果拿不到分布式锁，那么就等待，不断轮询等待，直到自己获取到分布式的锁</li>
+</ol>
+</blockquote>
+</blockquote>
+</li>
+</ol>
+<hr>
+<p><img src="/2018/12/28/57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案/多个缓存服务实例分布式重建的并发冲突问题.png" alt="多个缓存服务实例分布式重建的并发冲突问题" title="多个缓存服务实例分布式重建的并发冲突问题"></p>
+<p><img src="/2018/12/28/57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案/缓存更新和缓存重建在不同机器上的并发冲突问题.png" alt="缓存更新和缓存重建在不同机器上的并发冲突问题" title="缓存更新和缓存重建在不同机器上的并发冲突问题"></p>
+<p><img src="/2018/12/28/57-分布式缓存重建并发冲突问题以及zookeeper分布式锁解决方案/基于zookeeper分布式锁的冲突解决方案.png" alt="基于zookeeper分布式锁的冲突解决方案" title="基于zookeeper分布式锁的冲突解决方案"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/27/54-基于nginx-lua-java完成多级缓存架构的核心业务逻辑/" rel="next" title="54-基于nginx-lua-java完成多级缓存架构的核心业务逻辑">
+                <i class="fa fa-chevron-left"></i> 54-基于nginx-lua-java完成多级缓存架构的核心业务逻辑
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/08/61-67-Storm教程/" rel="prev" title="61-67-Storm教程">
+                61-67-Storm教程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">laungcisin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式重建缓存的并发冲突问题"><span class="nav-number">1.</span> <span class="nav-text">分布式重建缓存的并发冲突问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式重建缓存的并发冲突问题-1"><span class="nav-number">2.</span> <span class="nav-text">分布式重建缓存的并发冲突问题</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">laungcisin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

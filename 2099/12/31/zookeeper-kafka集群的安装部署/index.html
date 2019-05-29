@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh_cn">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="zookeeper集群搭建解压文件123tar -zxvf /home/bigdata/software/zookeeper-3.4.11.tar.gz -C /export/servers/cd /export/servers/ln -s zookeeper-3.4.11 zookeeper 修改配置修改zookeeper数据目录和日志目录123456789cd /export/servers/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="zookeeper-kafka集群的安装部署">
+<meta property="og:url" content="http://yoursite.com/2099/12/31/zookeeper-kafka集群的安装部署/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="zookeeper集群搭建解压文件123tar -zxvf /home/bigdata/software/zookeeper-3.4.11.tar.gz -C /export/servers/cd /export/servers/ln -s zookeeper-3.4.11 zookeeper 修改配置修改zookeeper数据目录和日志目录123456789cd /export/servers/">
+<meta property="og:locale" content="zh_cn">
+<meta property="og:updated_time" content="2019-04-11T07:18:15.992Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="zookeeper-kafka集群的安装部署">
+<meta name="twitter:description" content="zookeeper集群搭建解压文件123tar -zxvf /home/bigdata/software/zookeeper-3.4.11.tar.gz -C /export/servers/cd /export/servers/ln -s zookeeper-3.4.11 zookeeper 修改配置修改zookeeper数据目录和日志目录123456789cd /export/servers/">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2099/12/31/zookeeper-kafka集群的安装部署/">
+
+
+
+
+
+  <title>zookeeper-kafka集群的安装部署 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh_cn">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2099/12/31/zookeeper-kafka集群的安装部署/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laungcisin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">zookeeper-kafka集群的安装部署</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2099-12-31T00:00:04+08:00">
+                2099-12-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="zookeeper集群搭建"><a href="#zookeeper集群搭建" class="headerlink" title="zookeeper集群搭建"></a>zookeeper集群搭建</h1><h2 id="解压文件"><a href="#解压文件" class="headerlink" title="解压文件"></a>解压文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf /home/bigdata/software/zookeeper-3.4.11.tar.gz -C /export/servers/</span><br><span class="line">cd /export/servers/</span><br><span class="line">ln -s zookeeper-3.4.11 zookeeper</span><br></pre></td></tr></table></figure>
+<h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><h3 id="修改zookeeper数据目录和日志目录"><a href="#修改zookeeper数据目录和日志目录" class="headerlink" title="修改zookeeper数据目录和日志目录"></a>修改zookeeper数据目录和日志目录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd /export/servers/zookeeper/conf</span><br><span class="line">cp zoo_sample.cfg zoo.cfg</span><br><span class="line">vi /export/servers/zookeeper/conf/zoo.cfg</span><br><span class="line"></span><br><span class="line">#zookeeper数据目录</span><br><span class="line">dataDir=/export/data/zookeeper/workdir/data</span><br><span class="line"></span><br><span class="line">#zookeeper日志目录</span><br><span class="line">dataLogDir=/export/data/zookeeper/workdir/log</span><br></pre></td></tr></table></figure>
+<h3 id="设置zookeeper集群信息"><a href="#设置zookeeper集群信息" class="headerlink" title="设置zookeeper集群信息"></a>设置zookeeper集群信息</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vi /export/servers/zookeeper/conf/zoo.cfg</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">#设置集群信息,此处的bigdata0x可以用ip地址代替</span><br><span class="line">server.1=bigdata01:2888:3888</span><br><span class="line">server.2=bigdata02:2888:3888</span><br><span class="line">server.3=bigdata03:2888:3888</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#执行</span><br><span class="line">rm -rf /export/data/zookeeper/</span><br><span class="line"></span><br><span class="line">mkdir -p /export/data/zookeeper/workdir/data</span><br><span class="line">mkdir -p /export/data/zookeeper/workdir/log</span><br><span class="line"></span><br><span class="line">echo &quot;1&quot; &gt; /export/data/zookeeper/workdir/data/myid</span><br></pre></td></tr></table></figure>
+<h3 id="将zookeeper拷贝到其它机器上"><a href="#将zookeeper拷贝到其它机器上" class="headerlink" title="将zookeeper拷贝到其它机器上"></a>将zookeeper拷贝到其它机器上</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#将zookeeper拷贝至bigdata02机器上</span><br><span class="line">scp -r /export/servers/zookeeper-3.4.11 bigdata@bigdata02:/export/servers</span><br><span class="line"></span><br><span class="line">#进入bigdata02机器执行以下命令</span><br><span class="line">mkdir -p /export/data/zookeeper/workdir/data</span><br><span class="line">echo &quot;2&quot; &gt; /export/data/zookeeper/workdir/data/myid</span><br><span class="line"></span><br><span class="line">#将zookeeper拷贝至bigdata03机器上</span><br><span class="line">scp -r /export/servers/zookeeper-3.4.11 bigdata@bigdata03:/export/servers</span><br><span class="line"></span><br><span class="line">#进入bigdata03机器执行以下命令</span><br><span class="line">mkdir -p /export/data/zookeeper/workdir/data</span><br><span class="line">echo &quot;3&quot; &gt; /export/data/zookeeper/workdir/data/myid</span><br></pre></td></tr></table></figure>
+<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#切换成root用户执行，修改profile文件</span><br><span class="line">vi /etc/profile</span><br><span class="line">#Zookeeper</span><br><span class="line">export ZOOKEEPER_HOME=/export/servers/zookeeper</span><br><span class="line">export PATH=$PATH:$&#123;ZOOKEEPER_HOME&#125;/bin</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#使配置生效</span><br><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+<h2 id="zk命令"><a href="#zk命令" class="headerlink" title="zk命令"></a>zk命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#启动时，切换成bigdata用户</span><br><span class="line">su bigdata</span><br><span class="line"></span><br><span class="line">#启动zookeeper</span><br><span class="line">zkServer.sh start</span><br><span class="line"></span><br><span class="line">#查看zookeeper状态</span><br><span class="line">zkServer.sh status</span><br></pre></td></tr></table></figure>
+<h1 id="kafka集群搭建"><a href="#kafka集群搭建" class="headerlink" title="kafka集群搭建"></a>kafka集群搭建</h1><p>搭建kafka集群前，先保证zookeeper集群已搭建成功。</p>
+<h2 id="解压文件-1"><a href="#解压文件-1" class="headerlink" title="解压文件"></a>解压文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf /home/bigdata/software/kafka_2.11-1.0.0.tgz -C /export/servers/</span><br><span class="line">cd /export/servers/</span><br><span class="line">ln -s kafka_2.11-1.0.0 kafka</span><br></pre></td></tr></table></figure>
+<h2 id="修改配置-1"><a href="#修改配置-1" class="headerlink" title="修改配置"></a>修改配置</h2><h3 id="修改zookeeper数据目录和日志目录-1"><a href="#修改zookeeper数据目录和日志目录-1" class="headerlink" title="修改zookeeper数据目录和日志目录"></a>修改zookeeper数据目录和日志目录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">cp /export/servers/kafka/config/server.properties /export/servers/kafka/config/server.properties.bak</span><br><span class="line">vi /export/servers/kafka/config/server.properties</span><br><span class="line"></span><br><span class="line">#根据实际情况修改</span><br><span class="line">#当前机器在集群中的唯一标识，和zookeeper的myid性质一样</span><br><span class="line">broker.id=0</span><br><span class="line"></span><br><span class="line">#当前kafka对外提供服务的端口默认是9092</span><br><span class="line">port=9092</span><br><span class="line"></span><br><span class="line">#这个参数默认是关闭的，在0.8.1有个bug，DNS解析问题，失败率的问题。</span><br><span class="line">host.name=192.168.33.61</span><br><span class="line"></span><br><span class="line">#这个是borker进行网络处理的线程数</span><br><span class="line">num.network.threads=3</span><br><span class="line"></span><br><span class="line">#这个是borker进行I/O处理的线程数</span><br><span class="line">num.io.threads=8</span><br><span class="line"></span><br><span class="line">#消息存放的目录，这个目录可以配置为&quot;,&quot;逗号分割的表达式，</span><br><span class="line">#上面的num.io.threads要大于这个目录的个数这个目录，</span><br><span class="line">#如果配置多个目录，新创建的topic他把消息持久化的地方是，当前以逗号分割的目录中，那个分区数最少就放那一个</span><br><span class="line">log.dirs=/export/data/kafka/logs</span><br><span class="line"></span><br><span class="line">#发送缓冲区buffer大小，数据不是一下子就发送的，先回存储到缓冲区了到达一定的大小后在发送，能提高性能</span><br><span class="line">socket.send.buffer.bytes=102400</span><br><span class="line"></span><br><span class="line">#kafka接收缓冲区大小，当数据到达一定大小后在序列化到磁盘</span><br><span class="line">socket.receive.buffer.bytes=102400</span><br><span class="line"></span><br><span class="line">#这个参数是向kafka请求消息或者向kafka发送消息的请请求的最大数，这个值不能超过java的堆栈大小</span><br><span class="line">socket.request.max.bytes=104857600</span><br><span class="line"></span><br><span class="line">#默认的分区数，一个topic默认1个分区数</span><br><span class="line">num.partitions=1</span><br><span class="line"></span><br><span class="line">#默认消息的最大持久化时间，168小时，7天</span><br><span class="line">log.retention.hours=168</span><br><span class="line"></span><br><span class="line">#消息保存的最大值5M</span><br><span class="line">message.max.byte=5242880</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#kafka保存消息的副本数，如果一个副本失效了，另一个还可以继续提供服务</span><br><span class="line">default.replication.factor=2</span><br><span class="line"></span><br><span class="line">#取消息的最大直接数</span><br><span class="line">replica.fetch.max.bytes=5242880</span><br><span class="line"></span><br><span class="line">#这个参数是：因为kafka的消息是以追加的形式落地到文件，当超过这个值的时候，kafka会新起一个文件</span><br><span class="line">log.segment.bytes=1073741824</span><br><span class="line"></span><br><span class="line">#每隔300000毫秒去检查上面配置的log失效时间（log.retention.hours=168 ），</span><br><span class="line">#到目录查看是否有过期的消息如果有，删除</span><br><span class="line">log.retention.check.interval.ms=300000</span><br><span class="line"></span><br><span class="line">#是否启用log压缩，一般不用启用，启用的话可以提高性能</span><br><span class="line">log.cleaner.enable=false</span><br><span class="line"></span><br><span class="line">#设置zookeeper的连接端口</span><br><span class="line">zookeeper.connect=bigdata01:2181,bigdata02:2181,bigdata03:2181</span><br><span class="line"></span><br><span class="line">#远程消费的话，配置此参数</span><br><span class="line">listeners=PLAINTEXT://192.168.33.61:9092</span><br></pre></td></tr></table></figure>
+<h2 id="分发安装包"><a href="#分发安装包" class="headerlink" title="分发安装包"></a>分发安装包</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#将kafka安装包分发到其它机器上</span><br><span class="line">scp -r /export/servers/kafka_2.11-1.0.0 bigdata@bigdata02:/export/servers</span><br><span class="line">scp -r /export/servers/kafka_2.11-1.0.0 bigdata@bigdata03:/export/servers</span><br><span class="line"></span><br><span class="line">#然后分别在各机器上创建软连</span><br><span class="line">cd /export/servers/</span><br><span class="line">ln -s kafka_2.11-1.0.0 kafka</span><br></pre></td></tr></table></figure>
+<h2 id="修改其它机器上的kafka配置"><a href="#修改其它机器上的kafka配置" class="headerlink" title="修改其它机器上的kafka配置"></a>修改其它机器上的kafka配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#修改其它机器的kafka配置信息</span><br><span class="line">vi /export/servers/kafka/config/server.properties</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">将broker.id的值，修改成相应的数字</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h2 id="添加环境变量"><a href="#添加环境变量" class="headerlink" title="添加环境变量"></a>添加环境变量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#切换成root用户执行，修改profile文件</span><br><span class="line">vi /etc/profile</span><br><span class="line"></span><br><span class="line">#Kafka</span><br><span class="line">export KAFKA_HOME=/export/servers/kafka</span><br><span class="line">export PATH=$PATH:$KAFKA_HOME/bin</span><br><span class="line"></span><br><span class="line">#使配置生效</span><br><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+<h2 id="kafka命令"><a href="#kafka命令" class="headerlink" title="kafka命令"></a>kafka命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">#依次在各节点上启动kafka</span><br><span class="line">kafka-server-start.sh /export/servers/kafka/config/server.properties &gt; /dev/null 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">#停止kafka</span><br><span class="line">kafka-server-stop.sh</span><br><span class="line"></span><br><span class="line">#查看当前服务器中的所有topic</span><br><span class="line">kafka-topics.sh --list --zookeeper bigdata01:2181</span><br><span class="line"></span><br><span class="line">#创建topic</span><br><span class="line">kafka-topics.sh --create --zookeeper bigdata01:2181 --replication-factor 3 --partitions 3 --topic test</span><br><span class="line"></span><br><span class="line">#删除topic</span><br><span class="line">kafka-topics.sh --delete --zookeeper bigdata01:2181 --topic test</span><br><span class="line">需要server.properties中设置delete.topic.enable=true否则只是标记删除或者直接重启。</span><br><span class="line"></span><br><span class="line">#通过shell命令发送消息</span><br><span class="line">kafka-console-producer.sh --broker-list bigdata01:9092 --topic test</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#通过shell消费消息</span><br><span class="line">kafka-console-consumer.sh --zookeeper bigdata01:2181 --from-beginning --topic test</span><br><span class="line"></span><br><span class="line">#查看消费位置</span><br><span class="line">kafka-run-class.sh kafka.tools.ConsumerOffsetChecker --zookeeper bigdata01:2181 --group testGroup</span><br><span class="line"></span><br><span class="line">#查看某个Topic的详情</span><br><span class="line">kafka-topics.sh --topic test --describe --zookeeper bigdata01:2181</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2088/01/01/layui-table-行选中checkbox勾选-行变色/" rel="next" title="layui-table-行选中checkbox勾选-行变色">
+                <i class="fa fa-chevron-left"></i> layui-table-行选中checkbox勾选-行变色
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2099/12/31/storm集群安装/" rel="prev" title="storm集群安装并运行程序">
+                storm集群安装并运行程序 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">laungcisin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#zookeeper集群搭建"><span class="nav-number">1.</span> <span class="nav-text">zookeeper集群搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解压文件"><span class="nav-number">1.1.</span> <span class="nav-text">解压文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改配置"><span class="nav-number">1.2.</span> <span class="nav-text">修改配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#修改zookeeper数据目录和日志目录"><span class="nav-number">1.2.1.</span> <span class="nav-text">修改zookeeper数据目录和日志目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置zookeeper集群信息"><span class="nav-number">1.2.2.</span> <span class="nav-text">设置zookeeper集群信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将zookeeper拷贝到其它机器上"><span class="nav-number">1.2.3.</span> <span class="nav-text">将zookeeper拷贝到其它机器上</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置环境变量"><span class="nav-number">1.2.4.</span> <span class="nav-text">配置环境变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zk命令"><span class="nav-number">1.3.</span> <span class="nav-text">zk命令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#kafka集群搭建"><span class="nav-number">2.</span> <span class="nav-text">kafka集群搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解压文件-1"><span class="nav-number">2.1.</span> <span class="nav-text">解压文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改配置-1"><span class="nav-number">2.2.</span> <span class="nav-text">修改配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#修改zookeeper数据目录和日志目录-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">修改zookeeper数据目录和日志目录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分发安装包"><span class="nav-number">2.3.</span> <span class="nav-text">分发安装包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改其它机器上的kafka配置"><span class="nav-number">2.4.</span> <span class="nav-text">修改其它机器上的kafka配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加环境变量"><span class="nav-number">2.5.</span> <span class="nav-text">添加环境变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kafka命令"><span class="nav-number">2.6.</span> <span class="nav-text">kafka命令</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">laungcisin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

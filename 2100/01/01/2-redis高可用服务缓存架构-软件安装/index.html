@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh_cn">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="7.1 安装单机版redis7.1.1 安装单机版redis 更改/usr/local的group和user权限  1sudo chown bigdata:bigdata /usr/local -R  安装tcl。本文安装tcl8.6.1版本  12345678cd /home/bigdata/software/wget http://downloads.sourceforge.net/tcl/t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2-redis高可用服务缓存架构-软件安装">
+<meta property="og:url" content="http://yoursite.com/2100/01/01/2-redis高可用服务缓存架构-软件安装/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="7.1 安装单机版redis7.1.1 安装单机版redis 更改/usr/local的group和user权限  1sudo chown bigdata:bigdata /usr/local -R  安装tcl。本文安装tcl8.6.1版本  12345678cd /home/bigdata/software/wget http://downloads.sourceforge.net/tcl/t">
+<meta property="og:locale" content="zh_cn">
+<meta property="og:updated_time" content="2019-05-29T16:13:25.538Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2-redis高可用服务缓存架构-软件安装">
+<meta name="twitter:description" content="7.1 安装单机版redis7.1.1 安装单机版redis 更改/usr/local的group和user权限  1sudo chown bigdata:bigdata /usr/local -R  安装tcl。本文安装tcl8.6.1版本  12345678cd /home/bigdata/software/wget http://downloads.sourceforge.net/tcl/t">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2100/01/01/2-redis高可用服务缓存架构-软件安装/">
+
+
+
+
+
+  <title>2-redis高可用服务缓存架构-软件安装 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh_cn">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2100/01/01/2-redis高可用服务缓存架构-软件安装/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laungcisin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2-redis高可用服务缓存架构-软件安装</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2100-01-01T08:08:07+08:00">
+                2100-01-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="7-1-安装单机版redis"><a href="#7-1-安装单机版redis" class="headerlink" title="7.1 安装单机版redis"></a>7.1 安装单机版redis</h2><h3 id="7-1-1-安装单机版redis"><a href="#7-1-1-安装单机版redis" class="headerlink" title="7.1.1 安装单机版redis"></a>7.1.1 安装单机版redis</h3><ol>
+<li><p>更改<code>/usr/local</code>的<code>group</code>和<code>user</code>权限</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chown bigdata:bigdata /usr/local -R</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装<code>tcl</code>。本文安装<code>tcl8.6.1</code>版本</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">cd /home/bigdata/software/</span><br><span class="line">wget http://downloads.sourceforge.net/tcl/tcl8.6.1-src.tar.gz</span><br><span class="line">chmod 777 tcl8.6.1-src.tar.gz</span><br><span class="line">tar -zxvf /home/bigdata/software/tcl8.6.1-src.tar.gz -C /export/servers</span><br><span class="line">cd /export/servers/tcl8.6.1/unix/</span><br><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装<code>redis</code>。本文安装<code>redis-3.2.8</code>版本</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">cd /home/bigdata/software/</span><br><span class="line">wget http://download.redis.io/releases/redis-3.2.8.tar.gz</span><br><span class="line">chmod 777 redis-3.2.8.tar.gz</span><br><span class="line">tar -zxvf /home/bigdata/software/redis-3.2.8.tar.gz  -C /export/servers</span><br><span class="line">cd /export/servers</span><br><span class="line">ln -s redis-3.2.8 redis</span><br><span class="line">cd /export/servers/redis</span><br><span class="line">make &amp;&amp; make test &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="7-1-2-redis的生产环境启动方案（非root用户启动）"><a href="#7-1-2-redis的生产环境启动方案（非root用户启动）" class="headerlink" title="7.1.2 redis的生产环境启动方案（非root用户启动）"></a>7.1.2 <code>redis</code>的生产环境启动方案（非<code>root</code>用户启动）</h3><ol>
+<li><p>将 <code>/export/servers/redis/utils/redis_init_script</code>脚本拷贝至<code>/etc/init.d</code> ，重命名为<code>redis_6379</code>，<code>6379</code>是<code>redis</code>实例监听的端口号。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#root用户执行</span><br><span class="line">cp -r /export/servers/redis/utils/redis_init_script /etc/init.d</span><br><span class="line">cd /etc/init.d</span><br><span class="line">mv redis_init_script redis_6379</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建三个目录，一个存放<code>redis</code>配置文件，一个存放<code>redis</code>的持久化文件，一个存放<code>redis</code>日志</p>
+<ul>
+<li><p>创建存放<code>redis</code>的配置文件目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#非root用户执行</span><br><span class="line">mkdir -p /export/data/redis/conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建存放<code>redis</code>的持久化文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#非root用户执行</span><br><span class="line">mkdir -p /export/data/redis/6379</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建存放<code>redis</code>日志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#非root用户执行</span><br><span class="line">mkdir -p /export/data/redis/logs</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>修改 <code>/etc/init.d/redis_6379</code> 脚本内容</p>
+<ul>
+<li>修改 <code>/etc/init.d/redis_6379</code>的<code>REDISPORT</code>为<code>6379</code>，默认是<code>6379</code>，可不修改</li>
+<li>设置 <code>PIDFILE=/export/data/redis/redis_${REDISPORT}.pid</code></li>
+<li>设置 <code>CONF=&quot;/export/data/redis/conf/${REDISPORT}.conf&quot;</code></li>
+</ul>
+</li>
+</ol>
+<ol start="4">
+<li>修改<code>redis</code>配置文件，并重命名<br> 将<code>/export/servers/redis/redis.conf</code>拷贝至<code>/export/data/redis/conf</code>，并重命名成<code>6379.conf</code> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#非root用户执行</span><br><span class="line">cp -r /export/servers/redis/redis.conf /export/data/redis/conf</span><br><span class="line">cd /export/data/redis/conf</span><br><span class="line">mv redis.conf 6379.conf</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>修改配置</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">配置项</th>
+<th>配置值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">daemonize</td>
+<td>yes</td>
+<td>让redis以daemon进程运行</td>
+</tr>
+<tr>
+<td style="text-align:left">pidfile</td>
+<td>/export/data/redis/redis_6379.pid</td>
+<td>设置redis的pid文件位置</td>
+</tr>
+<tr>
+<td style="text-align:left">port</td>
+<td>6379</td>
+<td>设置redis的监听端口号</td>
+</tr>
+<tr>
+<td style="text-align:left">dir</td>
+<td>/export/data/redis/6379</td>
+<td>设置持久化文件的存储位置</td>
+</tr>
+<tr>
+<td style="text-align:left">bind</td>
+<td>127.0.0.1 192.168.33.61</td>
+<td>设置绑定地址，使用redis-cli命令时， 使用-h参数时， 要指定ip地址</td>
+</tr>
+</tbody>
+</table>
+<ol start="5">
+<li><p>启动<code>redis</code>，关闭<code>redis</code></p>
+<ul>
+<li><p><code>root</code>用户启动<code>redis</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#用root用户执行</span><br><span class="line">cd /etc/init.d</span><br><span class="line">chmod 777 redis_6379</span><br><span class="line">./redis_6379 start</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>非<code>root</code>用户启动<code>redis</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/bin/redis-server /export/data/redis/conf/6379.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>非<code>root</code>用户关闭<code>redis</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/bin/redis-cli -p 7200 shutdown</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>确认<code>redis</code>进程是否启动</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep redis</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>让<code>redis</code>跟随系统启动<br> 修改<code>/etc/init.d/redis_6379</code>脚本<br> 在<code>/etc/init.d/redis_6379</code>脚本中，最上面，加入下面两行注释</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#用root用户执行</span><br><span class="line">vi /etc/init.d/redis_6379</span><br><span class="line"></span><br><span class="line"># 添加下面两行注释</span><br><span class="line"># chkconfig:   2345 90 10</span><br><span class="line"># description:  Redis is a persistent key-value database</span><br><span class="line"></span><br><span class="line">#执行以下命令，设置开机服务自动启动</span><br><span class="line">cd /etc/init.d/</span><br><span class="line">chkconfig redis_6379 on</span><br><span class="line"></span><br><span class="line">#如果要关闭自动启动，执行以下命令</span><br><span class="line">cd /etc/init.d/</span><br><span class="line">chkconfig redis_6379 off</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>redis cli</code>的使用</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#连接本机的6379端口停止redis进程</span><br><span class="line">redis-cli SHUTDOWN</span><br><span class="line"></span><br><span class="line">redis-cli -h 192.168.33.61 -p 6379</span><br><span class="line"></span><br><span class="line">#指定要连接的ip和端口号</span><br><span class="line">redis-cli -h 127.0.0.1 -p 6379 SHUTDOWN</span><br><span class="line"></span><br><span class="line">#ping redis的端口，看是否正常</span><br><span class="line">redis-cli PING</span><br><span class="line"></span><br><span class="line">redis-cli，进入交互式命令行</span><br><span class="line"></span><br><span class="line">#设置键值</span><br><span class="line">SET k1 v1</span><br><span class="line"></span><br><span class="line">#获取值</span><br><span class="line">GET k1</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="7-2-搭建redis-cluster集群"><a href="#7-2-搭建redis-cluster集群" class="headerlink" title="7.2 搭建redis-cluster集群"></a>7.2 搭建<code>redis-cluster</code>集群</h2><h3 id="7-2-1-安装集群前的准备"><a href="#7-2-1-安装集群前的准备" class="headerlink" title="7.2.1 安装集群前的准备"></a>7.2.1 安装集群前的准备</h3><p><strong>*CentOS安装redis集群提示</strong><code>redis requires ruby version 2.2.2</code><strong>的解决方案*</strong></p>
+<ol>
+<li><p>安装RVM</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#具体RVM安装命令地址，参考：http://rvm.io/</span><br><span class="line">gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB </span><br><span class="line"></span><br><span class="line">curl -sSL https://get.rvm.io | bash -s stable</span><br><span class="line">source /usr/local/rvm/scripts/rvm</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看rvm库中已知的ruby版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rvm list known</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装一个ruby版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rvm install 2.5.1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用一个ruby版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rvm use 2.5.1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置默认版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rvm use 2.5.1 --default</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>卸载一个已知版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rvm remove 1.8.1</span><br><span class="line">rvm remove 2.3.4</span><br><span class="line">rvm remove 2.4.1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看ruby版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby --version</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装redis</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install redis</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="7-2-2-安装redis集群"><a href="#7-2-2-安装redis集群" class="headerlink" title="7.2.2 安装redis集群"></a>7.2.2 安装<code>redis</code>集群</h3><blockquote>
+<p>集群配置3台机器，一台机器配置一主一从。<br>redis的配置文件：<code>/export/data/redis/conf/700*.conf</code><br>redis的持久化文件夹：<code>/export/data/redis/700*</code></p>
+</blockquote>
+<p><strong>3台机器：</strong></p>
+<blockquote>
+<p>192.168.33.61<br>192.168.33.62<br>192.168.33.63</p>
+</blockquote>
+<ol>
+<li><p>创建目录<br>在3台机器上执行如下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /export/data/redis-cluster</span><br><span class="line">mkdir -p /export/data/redis-cluster-log</span><br><span class="line">mkdir -p /export/data/redis/7001</span><br><span class="line">mkdir -p /export/data/redis/7002</span><br><span class="line">mkdir -p /export/data/redis/7003</span><br><span class="line">mkdir -p /export/data/redis/7004</span><br><span class="line">mkdir -p /export/data/redis/7005</span><br><span class="line">mkdir -p /export/data/redis/7006</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>/export/data/redis-cluster</code>为集群目录<br><code>/export/data/redis-cluster-log</code>为集群日志目录</p>
+</blockquote>
+</li>
+<li><p>准备配置文件<br><strong>在1台机器上执行如下命令，准备好配置文件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cp -r /export/servers/redis/redis.conf /export/data/redis/conf/7001.conf</span><br><span class="line">cp -r /export/servers/redis/redis.conf /export/data/redis/conf/7002.conf</span><br><span class="line">cp -r /export/servers/redis/redis.conf /export/data/redis/conf/7003.conf</span><br><span class="line">cp -r /export/servers/redis/redis.conf /export/data/redis/conf/7004.conf</span><br><span class="line">cp -r /export/servers/redis/redis.conf /export/data/redis/conf/7005.conf</span><br><span class="line">cp -r /export/servers/redis/redis.conf /export/data/redis/conf/7006.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改配置  </p>
+</li>
+</ol>
+<hr>
+<p><strong>机器端口分配情况：</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">机器ip</th>
+<th>分配的端口号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">192.168.33.61</td>
+<td>7001 ~ 7002</td>
+</tr>
+<tr>
+<td style="text-align:left">192.168.33.62</td>
+<td>7003 ~ 7004</td>
+</tr>
+<tr>
+<td style="text-align:left">192.168.33.63</td>
+<td>7005 ~ 7006</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>根据如下表格，并根据机器ip、端口分配情况，修改<strong><code>/export/data/redis/conf/700*.conf</code></strong>相应配置  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">配置项</th>
+<th>配置值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">port</td>
+<td>700*</td>
+<td>设置redis的监听端口号</td>
+</tr>
+<tr>
+<td style="text-align:left">cluster-enabled</td>
+<td>yes</td>
+<td>开启集群</td>
+</tr>
+<tr>
+<td style="text-align:left">cluster-config-file</td>
+<td>/export/data/redis-cluster/nodes-700*.conf</td>
+<td>集群配置文件</td>
+</tr>
+<tr>
+<td style="text-align:left">cluster-node-timeout</td>
+<td>15000</td>
+<td>超时时长</td>
+</tr>
+<tr>
+<td style="text-align:left">daemonize</td>
+<td>yes</td>
+<td>让redis以daemon进程运行</td>
+</tr>
+<tr>
+<td style="text-align:left">pidfile</td>
+<td>/export/data/redis/redis_700*.pid</td>
+<td>设置redis的pid文件位置</td>
+</tr>
+<tr>
+<td style="text-align:left">dir</td>
+<td>/export/data/redis/700*</td>
+<td>设置持久化文件的存储位置</td>
+</tr>
+<tr>
+<td style="text-align:left">logfile</td>
+<td>/export/data/redis-cluster-log/700*.log</td>
+<td>设置集群日志持久化文件的存储位置</td>
+</tr>
+<tr>
+<td style="text-align:left">bind</td>
+<td>192.168.33.6*</td>
+<td>设置绑定地址，最好不要绑定127.0.0.1，否则集群启动不起来</td>
+</tr>
+<tr>
+<td style="text-align:left">appendonly</td>
+<td>yes</td>
+<td>开启AOF功能</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>配置完后，将配置文件分发到另外两台机器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp -r /export/servers/redis/700* bigdata@192.168.33.62:/export/data/redis/conf/</span><br><span class="line">scp -r /export/servers/redis/700* bigdata@192.168.33.63:/export/data/redis/conf/</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li><p>准备生产环境的启动脚本<br>在<code>/etc/init.d</code>目录下，准备6个启动脚本，分别为: <code>redis_7001, redis_7002, redis_7003, redis_7004, redis_7005, redis_7006</code>，在每个启动脚本内，都修改对应的端口号。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line"># chkconfig:   2345 90 10</span><br><span class="line"># description:  Redis is a persistent key-value database</span><br><span class="line">#</span><br><span class="line"># Simple Redis init.d script conceived to work on Linux systems</span><br><span class="line"># as it does use of the /proc filesystem.</span><br><span class="line"></span><br><span class="line">#redis服务器监听的端口，根据实际情况修改</span><br><span class="line">REDISPORT=700*</span><br><span class="line">#EXEC=/usr/local/bin/redis-server</span><br><span class="line">#CLIEXEC=/usr/local/bin/redis-cli</span><br><span class="line"></span><br><span class="line">#PIDFILE=/var/run/redis_$&#123;REDISPORT&#125;.pid</span><br><span class="line">#CONF=&quot;/etc/redis/$&#123;REDISPORT&#125;.conf&quot;</span><br><span class="line"></span><br><span class="line">#服务端所处位置，在make install后默认存放于`/usr/local/bin/redis-server`，如果未make install则需要修改该路径，下同。</span><br><span class="line">EXEC=/usr/local/bin/redis-server</span><br><span class="line">#客户端位置</span><br><span class="line">CLIEXEC=/usr/local/bin/redis-cli</span><br><span class="line"></span><br><span class="line">#Redis的PID文件位置</span><br><span class="line">PIDFILE=/export/data/redis/redis_$&#123;REDISPORT&#125;.pid</span><br><span class="line">#配置文件位置，需要修改</span><br><span class="line">CONF=&quot;/export/data/redis/conf/$&#123;REDISPORT&#125;.conf&quot;</span><br><span class="line"></span><br><span class="line">case &quot;$1&quot; in</span><br><span class="line">    start)</span><br><span class="line">        if [ -f $PIDFILE ]</span><br><span class="line">        then</span><br><span class="line">                echo &quot;$PIDFILE exists, process is already running or crashed&quot;</span><br><span class="line">        else</span><br><span class="line">                echo &quot;Starting Redis server...&quot;</span><br><span class="line">                $EXEC $CONF</span><br><span class="line">        fi</span><br><span class="line">        ;;</span><br><span class="line">    stop)</span><br><span class="line">        if [ ! -f $PIDFILE ]</span><br><span class="line">        then</span><br><span class="line">                echo &quot;$PIDFILE does not exist, process is not running&quot;</span><br><span class="line">        else</span><br><span class="line">                PID=$(cat $PIDFILE)</span><br><span class="line">                echo &quot;Stopping ...&quot;</span><br><span class="line">                $CLIEXEC -p $REDISPORT shutdown</span><br><span class="line">                while [ -x /proc/$&#123;PID&#125; ]</span><br><span class="line">                do</span><br><span class="line">                    echo &quot;Waiting for Redis to shutdown ...&quot;</span><br><span class="line">                    sleep 1</span><br><span class="line">                done</span><br><span class="line">                echo &quot;Redis stopped&quot;</span><br><span class="line">        fi</span><br><span class="line">        ;;</span><br><span class="line">    *)</span><br><span class="line">        echo &quot;Please use start or stop as first argument&quot;</span><br><span class="line">        ;;</span><br><span class="line">esac</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在3台机器上，启动6个redis实例 </p>
+<blockquote>
+<p><strong>如果有启动redis实例，先停止实例</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/bin/redis-cli -p 7001 shutdown</span><br><span class="line">/usr/local/bin/redis-cli -p 7002 shutdown</span><br><span class="line">/usr/local/bin/redis-cli -p 7003 shutdown</span><br><span class="line">/usr/local/bin/redis-cli -p 7004 shutdown</span><br><span class="line">/usr/local/bin/redis-cli -p 7005 shutdown</span><br><span class="line">/usr/local/bin/redis-cli -p 7006 shutdown</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p><strong>清理集群状态</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /export/data/redis-cluster/*</span><br><span class="line">rm -rf /export/data/redis-cluster-log/*</span><br><span class="line"></span><br><span class="line">rm -rf /export/data/redis/7001/*</span><br><span class="line">rm -rf /export/data/redis/7002/*</span><br><span class="line">rm -rf /export/data/redis/7003/*</span><br><span class="line">rm -rf /export/data/redis/7004/*</span><br><span class="line">rm -rf /export/data/redis/7005/*</span><br><span class="line">rm -rf /export/data/redis/7006/*</span><br><span class="line"></span><br><span class="line">rm -rf /export/data/redis/redis_700*.pid</span><br><span class="line"></span><br><span class="line">#在192.168.33.61机器上执行redis-trib.rb create，所以要在清理192.168.33.61上的配置</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7001 flushdb </span><br><span class="line">redis-cli -h 192.168.33.61 -p 7001 flushall</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7001 cluster reset</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7002 flushdb </span><br><span class="line">redis-cli -h 192.168.33.61 -p 7002 flushall</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7002 cluster reset</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7003 flushdb </span><br><span class="line">redis-cli -h 192.168.33.61 -p 7003 flushall</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7003 cluster reset</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7004 flushdb </span><br><span class="line">redis-cli -h 192.168.33.61 -p 7004 flushall</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7004 cluster reset</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7005 flushdb </span><br><span class="line">redis-cli -h 192.168.33.61 -p 7005 flushall</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7005 cluster reset</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7006 flushdb </span><br><span class="line">redis-cli -h 192.168.33.61 -p 7006 flushall</span><br><span class="line">redis-cli -h 192.168.33.61 -p 7006 cluster reset</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>使用<code>flushall</code>和<code>cluster reset</code>命令，避免出现<code>ERR Slot 0 is already busy (Redis::CommandError)</code>错误</p>
+</blockquote>
+<blockquote>
+<p><strong>192.168.33.61机器执行以下命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/bin/redis-server /export/data/redis/conf/7001.conf</span><br><span class="line">/usr/local/bin/redis-server /export/data/redis/conf/7002.conf</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p><strong>192.168.33.62机器执行以下命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/bin/redis-server /export/data/redis/conf/7003.conf</span><br><span class="line">/usr/local/bin/redis-server /export/data/redis/conf/7004.conf</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p><strong>192.168.33.63机器执行以下命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/bin/redis-server /export/data/redis/conf/7005.conf</span><br><span class="line">/usr/local/bin/redis-server /export/data/redis/conf/7006.conf</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p><strong>查看redis实例启动日志：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /export/data/redis-cluster-log/700*</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>创建集群  </p>
+<blockquote>
+<p><strong>执行以下命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp /export/servers/redis/src/redis-trib.rb /usr/local/bin</span><br><span class="line">redis-trib.rb create --replicas 1 192.168.33.61:7001 192.168.33.61:7002 192.168.33.62:7003 192.168.33.62:7004 192.168.33.63:7005 192.168.33.63:7006</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>–replicas 1: 每个master有1个slave</p>
+</blockquote>
+<blockquote>
+<p><strong>如果出现以下错误：</strong><br>[ERR] Not all 16384 slots are covered by nodes，<br>执行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-trib.rb fix 192.168.33.61:7001</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p><strong>查看集群状态：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 192.168.33.61 -c -p 7001 cluster nodes</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>设置开机启动  </p>
+<blockquote>
+<p>使用root用户执行<br><strong>192.168.33.61机器执行以下命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#执行以下命令，设置开机服务自动启动</span><br><span class="line">cd /etc/init.d/</span><br><span class="line">chkconfig redis_7001 on</span><br><span class="line">chkconfig redis_7002 on</span><br><span class="line"></span><br><span class="line">#如果要关闭自动启动，执行以下命令</span><br><span class="line">cd /etc/init.d/</span><br><span class="line">chkconfig redis_7001 off</span><br><span class="line">chkconfig redis_7002 off</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p><strong>192.168.33.62机器执行以下命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#执行以下命令，设置开机服务自动启动</span><br><span class="line">cd /etc/init.d/</span><br><span class="line">chkconfig redis_7003 on</span><br><span class="line">chkconfig redis_7004 on</span><br><span class="line"></span><br><span class="line">#如果要关闭自动启动，执行以下命令</span><br><span class="line">cd /etc/init.d/</span><br><span class="line">chkconfig redis_7003 off</span><br><span class="line">chkconfig redis_7004 off</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p><strong>192.168.33.63机器执行以下命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#执行以下命令，设置开机服务自动启动</span><br><span class="line">cd /etc/init.d/</span><br><span class="line">chkconfig redis_7005 on</span><br><span class="line">chkconfig redis_7006 on</span><br><span class="line"></span><br><span class="line">#如果要关闭自动启动，执行以下命令</span><br><span class="line">cd /etc/init.d/</span><br><span class="line">chkconfig redis_7005 off</span><br><span class="line">chkconfig redis_7006 off</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ol>
+<h2 id="11-redis的RDB持久化配置以及数据恢复实验"><a href="#11-redis的RDB持久化配置以及数据恢复实验" class="headerlink" title="11. redis的RDB持久化配置以及数据恢复实验"></a>11. redis的RDB持久化配置以及数据恢复实验</h2><h3 id="11-1-如何配置RDB持久化机制"><a href="#11-1-如何配置RDB持久化机制" class="headerlink" title="11.1 如何配置RDB持久化机制"></a>11.1 如何配置RDB持久化机制</h3><p>修改配置<br><code>/etc/init.d/redis.conf</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">save 60 1000</span><br></pre></td></tr></table></figure></p>
+<p>每隔60s，如果有超过1000个key发生了变更，那么就生成一个新的dump.rdb文件，snapshotting，快照。</p>
+<p>save可以设置多个</p>
+<h3 id="11-2-RDB持久化机制的工作流程"><a href="#11-2-RDB持久化机制的工作流程" class="headerlink" title="11.2 RDB持久化机制的工作流程"></a>11.2 RDB持久化机制的工作流程</h3><ol>
+<li>redis根据配置自己尝试去生成rdb快照文件</li>
+<li>fork一个子进程出来</li>
+<li>子进程尝试将数据dump到临时的rdb快照文件中</li>
+<li>完成rdb快照文件的生成之后，就替换之前的旧的快照文件</li>
+</ol>
+<p>dump.rdb，每次生成一个新的快照，都会覆盖之前的老快照</p>
+<hr>
+<h3 id="11-3-基于RDB持久化机制的数据恢复实验"><a href="#11-3-基于RDB持久化机制的数据恢复实验" class="headerlink" title="11.3 基于RDB持久化机制的数据恢复实验"></a>11.3 基于RDB持久化机制的数据恢复实验</h3><ol>
+<li><p><code>redis-cli SHUTDOWN</code>这种方式去停掉redis，其实是一种安全退出的模式，redis在退出的时候会将内存中的数据<br>立即生成一份完整的rdb快<code>/var/redis/6379/dump.rdb</code></p>
+</li>
+<li><p>在<code>redis</code>中再保存几条新的数据，用<code>kill -9</code>粗暴杀死<code>redis</code>进程，模拟<code>redis</code>故障异常退出，导致内存数据丢失的场景<br>这次就发现，redis进程异常被杀掉，数据没有进dump文件，几条最新的数据就丢失了</p>
+</li>
+<li><p>手动设置一个save检查点，save 5 1</p>
+</li>
+<li>写入几条数据，等待5秒钟，会发现自动进行了一次dump rdb快照，在dump.rdb中发现了数据</li>
+<li>异常停掉redis进程，再重新启动redis，看刚才插入的数据还在</li>
+</ol>
+<p>rdb的手动配置检查点，以及rdb快照的生成，包括数据的丢失和恢复，全都演示过了</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2100/01/01/3-redis高可用服务缓存架构-软件启动/" rel="next" title="3-redis高可用服务缓存架构-软件启动">
+                <i class="fa fa-chevron-left"></i> 3-redis高可用服务缓存架构-软件启动
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2100/01/01/1-redis高可用服务缓存架构/" rel="prev" title="1-redis高可用服务缓存架构">
+                1-redis高可用服务缓存架构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">laungcisin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-安装单机版redis"><span class="nav-number">1.</span> <span class="nav-text">7.1 安装单机版redis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-1-安装单机版redis"><span class="nav-number">1.1.</span> <span class="nav-text">7.1.1 安装单机版redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-2-redis的生产环境启动方案（非root用户启动）"><span class="nav-number">1.2.</span> <span class="nav-text">7.1.2 redis的生产环境启动方案（非root用户启动）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-搭建redis-cluster集群"><span class="nav-number">2.</span> <span class="nav-text">7.2 搭建redis-cluster集群</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-1-安装集群前的准备"><span class="nav-number">2.1.</span> <span class="nav-text">7.2.1 安装集群前的准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-2-安装redis集群"><span class="nav-number">2.2.</span> <span class="nav-text">7.2.2 安装redis集群</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-redis的RDB持久化配置以及数据恢复实验"><span class="nav-number">3.</span> <span class="nav-text">11. redis的RDB持久化配置以及数据恢复实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-如何配置RDB持久化机制"><span class="nav-number">3.1.</span> <span class="nav-text">11.1 如何配置RDB持久化机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-2-RDB持久化机制的工作流程"><span class="nav-number">3.2.</span> <span class="nav-text">11.2 RDB持久化机制的工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-3-基于RDB持久化机制的数据恢复实验"><span class="nav-number">3.3.</span> <span class="nav-text">11.3 基于RDB持久化机制的数据恢复实验</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">laungcisin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
